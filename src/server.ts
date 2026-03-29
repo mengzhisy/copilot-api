@@ -8,11 +8,24 @@ import { messageRoutes } from "./routes/messages/route"
 import { modelRoutes } from "./routes/models/route"
 import { tokenRoute } from "./routes/token/route"
 import { usageRoute } from "./routes/usage/route"
+import { formatSize } from "./lib/utils"
 
 export const server = new Hono()
 
 server.use(logger())
 server.use(cors())
+
+server.use(async (c, next) => {
+  const reqText = await c.req.raw.clone().text()
+
+  await next()
+
+  const resText = await c.res.clone().text()
+
+  console.log(
+    `[Size] ${c.req.method} ${c.req.path} req=${formatSize(new TextEncoder().encode(reqText).length)} res=${formatSize(new TextEncoder().encode(resText).length)}`,
+  )
+})
 
 server.get("/", (c) => c.text("Server running"))
 
