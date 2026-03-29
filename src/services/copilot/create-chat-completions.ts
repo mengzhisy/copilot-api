@@ -4,6 +4,7 @@ import { events } from "fetch-event-stream"
 import { copilotHeaders, copilotBaseUrl } from "~/lib/api-config"
 import { HTTPError } from "~/lib/error"
 import { state } from "~/lib/state"
+import { formatSize } from "~/lib/utils"
 
 export const createChatCompletions = async (
   payload: ChatCompletionsPayload,
@@ -28,10 +29,17 @@ export const createChatCompletions = async (
     "X-Initiator": isAgentCall ? "agent" : "user",
   }
 
-  const response = await fetch(`${copilotBaseUrl(state)}/chat/completions`, {
+  const url = `${copilotBaseUrl(state)}/chat/completions`
+  const requestBody = JSON.stringify(payload)
+  const requestSize = formatSize(Buffer.byteLength(requestBody, "utf8"))
+  consola.info(
+    `[REQUEST] POST ${url} model="${payload.model}" request=${requestSize}`,
+  )
+
+  const response = await fetch(url, {
     method: "POST",
     headers,
-    body: JSON.stringify(payload),
+    body: requestBody,
   })
 
   if (!response.ok) {
