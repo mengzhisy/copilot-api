@@ -52,7 +52,7 @@ function translateModelName(model: string): string {
   if (model.startsWith("claude-sonnet-")) {
     model = "claude-sonnet-4.6"
   } else if (model.startsWith("claude-opus-")) {
-    model = "claude-opus-4.6"
+    model = "claude-opus-4.7"
   } else if (model.startsWith("claude-haiku-")) {
     model = "claude-haiku-4.5"
   }
